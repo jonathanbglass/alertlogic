@@ -93,7 +93,7 @@ def main():
     ' "config": { '\
     ' "aws": { "credential": { "id": "' + cred_id+ '" }, ' \
     ' "discover": true, "scan": true, ' \
-    ' "account_id": "' + awsaccount + '" ' \
+    ' "account_id": "' + args.awsaccount + '" ' \
     ' "scope": { "include": [ ' \
     ' { "type": "vpc", "key": "/aws/us-west-1/vpc/VPC_ID" } '\
     '], ' \
