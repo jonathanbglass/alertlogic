@@ -50,7 +50,8 @@ def main():
   credapiurl = "https://api.cloudinsight.alertlogic.com/sources/v1/" + account_id+"/credentials"
   credreq = requests.post(credapiurl, headers=headers, data=creddata)
   cred_json = credreq.json()
-  print(cred_json)
+  cred_id = cred_json['credential']['id']
+  print(cred_id)
   acctdata = '{"type": "' + acct_type + '", "type_id": "' + args.awsaccount +'", "defender_support": false, "name": "' + envname +'", "discover": true, "scan": false}'
   print (acctdata)
 
