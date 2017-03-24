@@ -33,6 +33,7 @@ def main():
   userapiurl = "https://api.cloudinsight.alertlogic.com/environments/v1/" +account_id 
   headers = {'content-type': 'application/json', 'x-aims-auth-token': aimtoken}
   envname = "aws-" + args.environmentname + "-" + args.awsaccount
+  sourcesapiurl = "https://api.cloudinsight.alertlogic.com/sources/v1/" + account_id
   '''
   sample payload:
   {
@@ -46,13 +47,60 @@ def main():
     }
   }
   '''
-  creddata = '{"credential": {"type": "iam_role", "name": "' + envname + '", "iam_role": { "arn": "' + args.rolearn +'", "external_id": "' + args.externalid +'"}}}'
-  credapiurl = "https://api.cloudinsight.alertlogic.com/sources/v1/" + account_id+"/credentials"
+  creddata = '{"credential": {"type": "iam_role", "name": "' + envname + \
+    '", "iam_role": { "arn": "' + args.rolearn +'", "external_id": "' + \
+    args.externalid +'"}}}'
+  credapiurl = sourcesapiurl + "/credentials"
   credreq = requests.post(credapiurl, headers=headers, data=creddata)
   cred_json = credreq.json()
   cred_id = cred_json['credential']['id']
-  print(cred_id)
-  acctdata = '{"type": "' + acct_type + '", "type_id": "' + args.awsaccount +'", "defender_support": false, "name": "' + envname +'", "discover": true, "scan": false}'
+  '''
+  sample payload:
+  {
+    "source": {
+      "config": {
+        "aws": {
+          "credential": {
+            "id": "ENTER_THE_CREDENTIALS_ID"
+          },
+          "discover": true,
+          "scan": true,
+          "account_id": "AWS_ACCOUNT_ID"
+          "scope": {
+                "include": [
+                  {
+                    "type": "vpc",
+                    "key": "/aws/us-west-1/vpc/VPC_ID"
+                  }
+                ],
+                "exclude": []
+           }
+        },
+        "collection_method": "api",
+        "collection_type": "aws"
+      },   
+      "enabled": true,   
+      "name": "Welly-AWS-Manual",
+      "product_type": "outcomes",
+      "tags": [],
+      "type": "environment"   
+    }
+  }
+  '''
+  srcapiurl = sourcesapiurl + "/sources"
+  acctdata = '{ ' \
+    ' "source": { '\
+    ' "config": { '\
+    ' "aws": { "credential": { "id": "' + cred_id+ '" }, ' \
+    ' "discover": true, "scan": true, ' \
+    ' "account_id": "' + awsaccount + '" ' \
+    ' "scope": { "include": [ ' \
+    ' { "type": "vpc", "key": "/aws/us-west-1/vpc/VPC_ID" } '\
+    '], ' \
+    ' "exclude": [] } }, ' \
+    ' "collection_method": "api", "collection_type": "aws" }, "enabled": true, '\
+    ' "name": "Welly-AWS-Manual", "product_type": "outcomes", "tags": [], '\
+    ' "type": "environment" } }'
   print (acctdata)
 
 main()
