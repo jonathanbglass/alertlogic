@@ -47,10 +47,8 @@ def main():
   }
   '''
   creddata = '{"credential": {"type": "iam_role", "name": "' + envname + '", "iam_role": { "arn": "' + args.rolearn +'", "external_id": "' + args.externalid +'"}}}'
-  print creddata
-  sys.exit()
-  data = '{"type": acct_type, "type_id": args.awsaccount, "defender_support":false, "name": envname, "discover":true, "scan":false}'
-  print (envname)
-  print (data)
+  print(creddata)
+  acctdata = '{"type": "' + acct_type + '", "type_id": "' + args.awsaccount +'", "defender_support": false, "name": "' + envname +'", "discover": true, "scan": false}'
+  print (acctdata)
 
 main()
