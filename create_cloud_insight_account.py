@@ -15,26 +15,42 @@ def authenticate(aimurl, username, password):
     return aimtoken, account_id;
 
 def main():
-    aimurl = "https://api.cloudinsight.alertlogic.com/aims/v1/authenticate"
-		# /environments/v1/:account_id
-		# curl -X POST -d '{"type":"aws", "type_id": "123456789012", "defender_support":true, "defender_location_id":"defender-us-denver", "discover":true, "scan":false}' https://api.cloudinsight.alertlogic.com/environments/v1/account_id
-    username = ''
-    password = ''
-		acct_type = "aws"
-    parser = argparse.ArgumentParser(description='Collect username, password, and csv cile.')
-    parser.add_argument('-a', '--awsaccount',  required=True, help="AWS Account ID")
-    parser.add_argument('-n', '--environmentname',  required=True, help="CI AWS Account Display (aws-AWS_NAME-Account_Number)")
-    parser.add_argument('-r', '--rolearn',  required=True, help="AWS Cross Account role ARN")
-    parser.add_argument('-e', '--externalid',  required=True, help="AWS Cross Account external ID")
-    parser.add_argument('-u', '--username', required=True)
-    parser.add_argument('-p', '--password', required=True)
-    args = parser.parse_args()
-    aimtoken, account_id = authenticate(aimurl, args.username, args.password)
-    userapiurl = "https://api.cloudinsight.alertlogic.com/environments/v1/" +account_id 
-    headers = {'content-type': 'application/json', 'x-aims-auth-token': aimtoken}
-		envname = "aws-" + args.environmentname + "-" + args.awsaccount
-		data = '{"type": acct_type, "type_id": args.awsaccount, "defender_support":false, "name": envname, "discover":true, "scan":false}'
-		print (envname)
-		print (data)
+  aimurl = "https://api.cloudinsight.alertlogic.com/aims/v1/authenticate"
+  # /environments/v1/:account_id
+  # curl -X POST -d '{"type":"aws", "type_id": "123456789012", "defender_support":true, "defender_location_id":"defender-us-denver", "discover":true, "scan":false}' https://api.cloudinsight.alertlogic.com/environments/v1/account_id
+  username = ''
+  password = ''
+  acct_type = "aws"
+  parser = argparse.ArgumentParser(description='Collect username, password, and csv cile.')
+  parser.add_argument('-a', '--awsaccount',  required=True, help="AWS Account ID")
+  parser.add_argument('-n', '--environmentname',  required=True, help="CI AWS Account Display (aws-AWS_NAME-Account_Number)")
+  parser.add_argument('-r', '--rolearn',  required=True, help="AWS Cross Account role ARN")
+  parser.add_argument('-e', '--externalid',  required=True, help="AWS Cross Account external ID")
+  parser.add_argument('-u', '--username', required=True)
+  parser.add_argument('-p', '--password', required=True)
+  args = parser.parse_args()
+  aimtoken, account_id = authenticate(aimurl, args.username, args.password)
+  userapiurl = "https://api.cloudinsight.alertlogic.com/environments/v1/" +account_id 
+  headers = {'content-type': 'application/json', 'x-aims-auth-token': aimtoken}
+  envname = "aws-" + args.environmentname + "-" + args.awsaccount
+  '''
+  sample payload:
+  {
+    "credential": {
+      "type": "iam_role",
+      "name": "Welly-AWS-Manual credentials",
+      "iam_role": {
+        "arn": "arn:aws:iam::AWS_ACCOUNT_ID:role/ROLE_NAME_HERE",
+        "external_id": "EXTERNAL_ID"
+      }   
+    }
+  }
+  '''
+  creddata = '{"credential": {"type": "iam_role", "name": envname, "iam_role": { "arn": args.rolearn, "external_id": args.externalid}}}'
+  print creddata
+  sys.exit()
+  data = '{"type": acct_type, "type_id": args.awsaccount, "defender_support":false, "name": envname, "discover":true, "scan":false}'
+  print (envname)
+  print (data)
 
 main()
