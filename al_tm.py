@@ -2,6 +2,7 @@ import requests
 import psycopg2
 import logging
 import json
+import getpass
 import sys, argparse
 import csv
 from requests.auth import HTTPBasicAuth
@@ -21,15 +22,17 @@ def connect_to_db():
         return cur;
 
 def hit_api(apiurl,headers,username,password,verbose):
-        if (verbose):
-            print(apiurl)
+	if (verbose):
+		print(apiurl)
 	r = requests.get(apiurl, auth=(username,password),headers=headers)
-        if (r.status_code == 200):
-            r_json = r.json()
-        else:
-            print("Error Code: " + str(r.status_code))
-            sys.exit()
-        return r_json['total_count'];
+	if (r.status_code == 200):
+		r_json = r.json()
+	else:
+		print("Error Code: " + str(r.status_code))
+		sys.exit()
+	if (verbose):
+		print(r_json)
+	return r_json['total_count'];
 
 def main():
 	parser = argparse.ArgumentParser(description='Collect username - User Key from console.alertlogic.net.')
@@ -42,20 +45,22 @@ def main():
 	parser.add_argument('-u', '--username', required=True)
 	args = parser.parse_args()
 	username = ''
-	password = ''
+	password = getpass.getpass()
+	if (args.verbose):
+		print (password)
 	baseurl = "https://publicapi.alertlogic.com"
-        if (args.verbose):
-            try:
-                import http.client as http_client
-            except ImportError:
-                import httplib as http_client
-            http_client.HTTPConnection.debuglevel = 1
-            logging.basicConfig()
-            logging.getLogger().setLevel(logging.DEBUG)
-            req_log = logging.getLogger("requests.packages.urllib3")
-            req_log.setLevel(logging.DEBUG)
-            req_log.propagate = True
-        # Collect our Customer ID, which is required in most API calls
+	if (args.verbose):
+		try:
+			import http.client as http_client
+		except ImportError:
+			import httplib as http_client
+		http_client.HTTPConnection.debuglevel = 1
+		logging.basicConfig()
+		logging.getLogger().setLevel(logging.DEBUG)
+		req_log = logging.getLogger("requests.packages.urllib3")
+		req_log.setLevel(logging.DEBUG)
+		req_log.propagate = True
+	# Collect our Customer ID, which is required in most API calls
 	getheaders = {'Accept': 'application/json'}
 	postheaders = {'content-type': 'application/json'}
 	password = ''
